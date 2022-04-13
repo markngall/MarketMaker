@@ -11,7 +11,7 @@
 
 int main() {
 
-    int settlement_val = 0, lower_limit, upper_limit, num_unknown, num_bots, max_trades;
+    int settlement_val = 0, lower_limit, upper_limit, num_public, num_bots, max_trades;
     std::vector<int> public_nums, positions;
     std::vector<double> balances;
     std::vector<Bot*> bots;
@@ -28,10 +28,10 @@ int main() {
     std::cout << "What is the upper limit of the range?" << std::endl;
     std::cin >>  upper_limit;
     std::cout << "How many public numbers do you want?" << std::endl;
-    std::cin >> num_unknown;
+    std::cin >> num_public;
     std::cout << "How many bots do you want?" << std::endl;
     std::cin >> num_bots;
-    std::cout << "What is the maximum number of trades per round? The maximum is 100." << std::endl; 
+    std::cout << "What is the maximum number of trades per round? The cap is 100." << std::endl; 
     std::cin >> max_trades;
 
     // Force round to end after 100 trades
@@ -57,27 +57,26 @@ int main() {
     for (int i = 0; i < num_bots; ++i) {
         num = distribution(random_generator);
         settlement_val += num;
-
         type = select_dist(random_generator);
         if (type == 1) {
-            bots.push_back(new RandomBot(i, num, lower_limit, upper_limit, num_unknown));
+            bots.push_back(new RandomBot(i, num, lower_limit, upper_limit, num_public, num_bots));
         } else if (type == 2) {
-            bots.push_back(new EVBot(i, num, lower_limit, upper_limit, num_unknown));
+            bots.push_back(new EVBot(i, num, lower_limit, upper_limit, num_public, num_bots));
         } else if (type == 3) {
-            bots.push_back(new HypeBot(i, num, lower_limit, upper_limit, num_unknown));
+            bots.push_back(new HypeBot(i, num, lower_limit, upper_limit, num_public, num_bots));
         } else if (type == 4) {
-            bots.push_back(new InferBot(i, num, lower_limit, upper_limit, num_unknown));
+            bots.push_back(new InferBot(i, num, lower_limit, upper_limit, num_public, num_bots));
         }
     }
 
     // Roll public numbers in advance
-    for (unsigned int i = 0; i < num_unknown; ++i) {
+    for (unsigned int i = 0; i < num_public; ++i) {
         num = distribution(random_generator);
         settlement_val += num;
         public_nums.push_back(num);
     }
 
-    std::cout << "There'll be " << num_unknown+1 << " rounds." << std::endl << std::endl;
+    std::cout << "There'll be " << num_public+1 << " rounds." << std::endl << std::endl;
 
     // Declare variables relevant to main game loop
     int num_trades = 0, bot, guess;
@@ -89,7 +88,7 @@ int main() {
 
     // Main game loop
     unsigned int i = 0; 
-    while (i < num_unknown+1) {
+    while (i < num_public+1) {
 
         std::cout << "Round " << i+1 << std::endl << std::endl;
         
@@ -97,7 +96,7 @@ int main() {
         if (i != 0) {
             std::cout << "The new public number is: " << public_nums[i-1] << std::endl;
             for (unsigned int j = 0; j < num_bots; ++j) {
-                bots[j]->set_public_num(public_nums[i-1]);
+                bots[j]->add_public_num(public_nums[i-1]);
             }
         }
 
@@ -169,7 +168,7 @@ int main() {
     }
 
     // Settle contracts
-    for (unsigned int i = 0; i < num_unknown+1; ++i) {
+    for (unsigned int i = 0; i < num_public+1; ++i) {
         balances[i] += positions[i] * settlement_val;
     }
 

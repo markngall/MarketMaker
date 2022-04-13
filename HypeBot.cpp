@@ -1,7 +1,7 @@
 #include "HypeBot.hpp"
 
-HypeBot::HypeBot(int& id, int& private_num, int& lower_limit, int& upper_limit, int& num_unknown)
-: Bot(id, private_num, lower_limit, upper_limit, num_unknown)
+HypeBot::HypeBot(int& id, int& private_num, int& lower_limit, int& upper_limit, int& num_public, int& num_bots)
+: Bot(id, private_num, lower_limit, upper_limit, num_public, num_bots)
 {}
 
 int HypeBot::choose_action() {
