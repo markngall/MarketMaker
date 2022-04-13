@@ -16,6 +16,7 @@ Rules:
 The following game settings can be adjusted:
 - The number of sides on each die.
 - The number of rounds.
+- The number of bots.
 - The maximum number of trades each round.
 
 Future features:
